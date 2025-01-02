@@ -87,7 +87,7 @@ x-airflow-common:
 
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:13
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
