@@ -8,3 +8,7 @@ apache-airflow-providers-sqlite
 pandas
 numpy
 requests
+json
+os
+datetime
+time

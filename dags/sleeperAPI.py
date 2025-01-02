@@ -33,7 +33,6 @@ def CreateAllPlayersTable(cursor):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS allPlayers (
             sleeper_player_id VARCHAR PRIMARY KEY,
-            stats_id VARCHAR,
             first_name VARCHAR,
             last_name VARCHAR,
             age INT,
