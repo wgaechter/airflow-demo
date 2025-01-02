@@ -127,7 +127,7 @@ default_args = {
 
 dag = DAG(dag_id='sleeperAPI_UpsertAllPlayersTable', 
           default_args=default_args, 
-          schedule_interval='@once',
+          schedule_interval='@hourly',
           catchup=False,
     )
 
