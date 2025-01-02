@@ -24,7 +24,6 @@ def GetUserInfo(username):
 def GetAllPlayers():
     url = "https://api.sleeper.app/v1/players/nfl"
     response = requests.get(url)
-
     allPlayers = response.json()
 
     return allPlayers
@@ -47,7 +46,7 @@ def CreateAllPlayersTable(cursor):
             status VARCHAR,
             injury_status VARCHAR,
             injury_body_part VARCHAR,
-            injury_start_date DATE,
+            injury_start_date DATE
         )
     """)
 
@@ -60,13 +59,17 @@ def UpsertAllPlayersTable():
         connection = pg_hook.get_conn()
         cursor = connection.cursor()
 
+        # Create the allPlayers table if it does not exist
         CreateAllPlayersTable(cursor)
+
+        # Get all players from the Sleeper API
         allPlayers = GetAllPlayers()
 
         for player in allPlayers.values():
+            print(player)
             cursor.execute(
             """
-            INSERT INTO allPlayers (sleeper_player_id, stats_id, first_name, last_name, age, years_exp, position, fantasy_positions, team, team_abbr, depth_chart_position, depth_chart_order, practice_description, status, injury_status, injury_body_part, injury_start_date)
+            INSERT INTO allPlayers (sleeper_player_id, first_name, last_name, age, years_exp, position, fantasy_positions, team, team_abbr, depth_chart_position, depth_chart_order, practice_description, status, injury_status, injury_body_part, injury_start_date)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
             ON CONFLICT (sleeper_player_id) DO UPDATE
             SET
@@ -87,24 +90,26 @@ def UpsertAllPlayersTable():
                 injury_start_date = EXCLUDED.injury_start_date
             """,
             (
-                player['player_id'],
-                player['first_name'],
-                player['last_name'],
-                player['age'],
-                player['years_exp'],
-                player['position'],
-                player['fantasy_positions'],
-                player['team'],
-                player['team_abbr'],
-                player['depth_chart_position'],
-                player['depth_chart_order'],
-                player['practice_description'],
-                player['status'],
-                player['injury_status'],
-                player['injury_body_part'],
-                player['injury_start_date']
+                player.get('player_id'),
+                player.get('first_name'),
+                player.get('last_name'),
+                player.get('age'),
+                player.get('years_exp'),
+                player.get('position'),
+                player.get('fantasy_positions'),
+                player.get('team'),
+                player.get('team_abbr'),
+                player.get('depth_chart_position'),
+                player.get('depth_chart_order'),
+                player.get('practice_description'),
+                player.get('status'),
+                player.get('injury_status'),
+                player.get('injury_body_part'),
+                player.get('injury_start_date')
             )
         )
+            
+            print(f"Upserted player {player.get('first_name')} {player.get('last_name')}")
         
         connection.commit()
         connection.close()
@@ -112,7 +117,7 @@ def UpsertAllPlayersTable():
     
     except Exception as e:
         print(e)
-        return Exception
+        return str(e)
 
 
 default_args = {
@@ -120,7 +125,7 @@ default_args = {
     'start_date': datetime(2024, 1, 1)
 }
 
-dag = DAG(dag_id='sleeperAPI_userPull', 
+dag = DAG(dag_id='sleeperAPI_UpsertAllPlayersTable', 
           default_args=default_args, 
           schedule_interval='@once',
           catchup=False,
