@@ -137,3 +137,4 @@ UpsertAllPlayersTable = PythonOperator(task_id='UpsertAllPlayersTable',
         )
 
 UpsertAllPlayersTable
+
