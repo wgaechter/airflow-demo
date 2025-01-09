@@ -6,6 +6,8 @@ Demo project for an Apache Airflow instance in a Docker container.
 
 This project demonstrates the setup and usage of Apache Airflow within a Docker container. It includes a sample Directed Acyclic Graph (DAG) called `sleeperAPI_MultiTask` to showcase how tasks can be orchestrated and managed using Airflow.
 
+The project utlizes as Data Lake in the form of Amazon S3 Buckets.  Folders of json files are saved and archived to store data for all players, users, leagues, and rosters that have been pulled from the sleeper API.  The data is cleaned and processed into a Postgres Database container for use by the PowerBI Dashboard for each user.
+
 ## sleeperAPI_MultiTask DAG
 
 The `sleeperAPI_MultiTask` DAG is designed to demonstrate the following:
